@@ -11,7 +11,7 @@ And yes, yes I wasn't able to statically link sfml, sorry :(
 # How to build on linux
 -Install g++ (will work on g++ 7, 10. Did not tested other compiler versions)
 
--Install SFML (sudo apt-get install libsfml-dev)
+-Install SFML (sudo apt-get install libsfml-dev=2.4.2+dfsg-4)
 
 -Build by doing:
 

@@ -5,7 +5,7 @@ Code is garbage, but I was not really caring about clean code when I wrote it, s
 # Getting started
 All the binaries for running it on windows you can find in bin/windows directory.
 
-In case you want to run it on linux, make sure to install SFML (sudo apt-get install libsfml-dev)
+In case you want to run it on linux, make sure to install SFML (sudo apt-get install libsfml-dev=2.4.2+dfsg-4)
 And yes, yes I wasn't able to statically link sfml, sorry :(
 
 # How to build on linux

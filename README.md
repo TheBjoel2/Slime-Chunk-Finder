@@ -20,7 +20,7 @@ g++ -c -O3 -s -g0 "Slime Chunk Finder.cpp" -o "Slime Chunk Finder.o"
 g++ -O3 -s -g0 "Slime Chunk Finder.o" -lsfml-graphics -lsfml-window -lsfml-system -o "Slime Chunk Finder"
 
 # How to build on windows
--Install mingw 7, 8 or 10 (Did not tested other compiler versions)
+-Install mingw 7, 8 or 10 (Did not test other compiler versions)
 
 -Download SFML
 

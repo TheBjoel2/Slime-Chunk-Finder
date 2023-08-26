@@ -1,0 +1,8 @@
+g++     scalar               502053803ns
+g++     scalar march native  353648887ns
+g++     vector              2282169878ns
+g++     vector march native 2200564336ns
+clang++ scalar               387455518ns
+clang++ scalar march native  174197243ns
+clang++ vector               679232589ns
+clang++ vector march native  476461732ns

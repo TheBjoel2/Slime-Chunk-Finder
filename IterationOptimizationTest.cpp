@@ -3,8 +3,12 @@
  * но по факту его нужно делать раз в 15 итераций. Или компилятор не тупой как биологическая женщина. */
 
 #include "GlobalSeedMatrix.cpp"
+#include "ShiftingXMatrixIteration.cpp"
 #include <iostream>
 #include <chrono>
+#include <experimental/simd>
+
+namespace stdx = std::experimental;
 
 template<typename Callable>
 void benchmark(Callable&& callable)
@@ -15,7 +19,6 @@ void benchmark(Callable&& callable)
     const std::chrono::steady_clock::duration dur = finish-start;
     std::cout << "It took " << dur.count() << "ns" << std::endl;
 }
-
 
 int32_t main()
 {
@@ -30,7 +33,7 @@ int32_t main()
     const auto simpleIteration = [&]
     {
         for(uint32_t i = posX+worldChunkSize/2; i < worldChunkSize; i++)
-            for(uint32_t j = posZ+worldChunkSize/2; j < worldChunkSize && j < posZ+worldChunkSize/2+15; j++)
+            for(uint32_t j = posZ+worldChunkSize/2; j < worldChunkSize && j < posZ+worldChunkSize/2+32; j++)
                 answer+=matrix.getSeedValue(i, j);
     };
     benchmark(simpleIteration);
@@ -42,12 +45,39 @@ int32_t main()
         for(uint32_t i = posX+worldChunkSize/2; i < worldChunkSize; i++)
         {
             const uint64_t xValue = matrix.getXValue(i);
-            for(uint32_t j = posZ+worldChunkSize/2; j < worldChunkSize && j < posZ+worldChunkSize/2+15; j++)
-                answer+=((xValue+matrix.getZValue(j))^0x3ad8025f);
+            for(uint32_t j = posZ+worldChunkSize/2; j < worldChunkSize && j < posZ+worldChunkSize/2+32; j++)
+                answer+=xValue+matrix.getZValue(j);
         }
     };
     benchmark(optimizedIteration);
     std::cout << answer << std::endl;
+
+    answer = 0;
+    const auto customIterator = [&]
+    {
+        for(const auto xValue : ShiftingXMatrixIteration(matrix, posX+worldChunkSize/2, worldChunkSize))
+            for(uint32_t j = posZ+worldChunkSize/2; j < worldChunkSize && j < posZ+worldChunkSize/2+32; j++)
+                answer+=xValue+matrix.getZValue(j);
+    };
+    benchmark(customIterator);
+    std::cout << answer << std::endl;
+
+    answer = 0;
+    const auto customIterator2 = [&] //faster
+    {
+        for(const auto xValue : ShiftingXMatrixIteration(matrix, posX+worldChunkSize/2, worldChunkSize))
+        {
+            stdx::fixed_size_simd<uint64_t, 32> val([&](uint32_t j)
+            {
+                return matrix.getZValue(j+posZ+worldChunkSize/2);
+            });
+            for(uint32_t j = 0; j < 32; j++)
+                answer+=xValue+val[j];
+        }
+    };
+    benchmark(customIterator2);
+    std::cout << answer << std::endl;
 }
 
 /*Вывод: есть небольшой смысл делать эту оптимизацию*/
+/*Вывод2: оверхеда у итератора нема*/

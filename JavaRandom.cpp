@@ -26,13 +26,25 @@ public:
 
     void setSeed(const uint64_t seed)
     {
-        m_Seed = (seed^0x5deece66d)&0xffffffffffff;;
+        m_Seed = (seed^0x5deece66d)&0xffffffffffff;
+    }
+
+    void setRawSeed(const uint64_t seed)
+    {
+        m_Seed = seed;
     }
 
     static uint32_t nextIntForSeed(const uint64_t seed, const uint32_t bound)
     {
         JavaRandom rand;
         rand.setSeed(seed);
+        return rand.nextInt(bound);
+    }
+
+    static uint32_t nextIntForRawSeed(const uint64_t seed, const uint32_t bound)
+    {
+        JavaRandom rand;
+        rand.setRawSeed(seed);
         return rand.nextInt(bound);
     }
 };

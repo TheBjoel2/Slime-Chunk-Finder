@@ -1,3 +1,6 @@
+#ifndef GLOBAL_SEED_MATRIX_CPP
+#define GLOBAL_SEED_MATRIX_CPP
+
 #include "SeedMatrix.cpp"
 
 //I believe that the world size in chunks is 3749998*3749998
@@ -9,3 +12,5 @@ public:
     GlobalSeedMatrix(const uint64_t seed, const uint32_t width):
         SlimeSeedMatrix(SlimeSeedMatrixParams{seed, -static_cast<int32_t>(width/2), -static_cast<int32_t>(width/2), width, width}){}
 };
+
+#endif // GLOBAL_SEED_MATRIX_CPP

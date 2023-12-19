@@ -35,10 +35,10 @@ public:
         return (XPlusSeedPart[matrixX]+ZPart[matrixZ])^0x3ad8025f;
     }
 
-    uint64_t getXValue(const uint32_t matrixX) { return XPlusSeedPart[matrixX]; }
-    uint64_t getZValue(const uint32_t matrixZ) { return ZPart[matrixZ]; }
+    uint64_t getXValue(const uint32_t matrixX) const { return XPlusSeedPart[matrixX]; }
+    uint64_t getZValue(const uint32_t matrixZ) const { return ZPart[matrixZ]; }
 
-    const SlimeSeedMatrixParams& getParams() { return params; }
+    const SlimeSeedMatrixParams& getParams() const { return params; }
 
 private:
     SlimeSeedMatrixParams params;

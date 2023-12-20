@@ -25,11 +25,11 @@ auto getTaskAreasFromUserInput(const uint32_t radius)
         Area area;
         area.beginX = 0;
         area.beginZ = currentZ;
-        //std::cout << "0 " << currentZ << std::endl;
+
         currentZ+=ZStep;
         if(currentZ > radius*2-15)
             currentZ = radius*2-15;
-        //std::cout << radius*2-15 << ' ' << currentZ << std::endl;
+
         area.endX = radius*2-15;
         area.endZ = currentZ;
 
@@ -55,6 +55,7 @@ public:
                 std::cout << (isSlimeChunk&isWithinSphere ? 'S' : ' ');
             }
         }
+        std::cout << std::endl;
     }
 
 private:
@@ -194,10 +195,28 @@ int32_t main()
             return toReturn;
         }));
 
-    for(auto& fut : finderFutures)
+    /*for(auto& fut : finderFutures)
     {
         const auto slimePos = fut.get();
         SlimeChunkPrinter::print(matrix, slimePos.x, slimePos.z);
         std::cout << static_cast<int32_t>(slimePos.x)-static_cast<int32_t>(radius) << ' ' << static_cast<int32_t>(slimePos.z)-static_cast<int32_t>(radius) << ' ' << slimePos.slimeChunkCount << std::endl;
+    }*/
+
+    SlimePosition bestPosition{0, 0, 0};
+    for(auto& fut : finderFutures)
+    {
+        const auto slimePos = fut.get();
+        if(slimePos.slimeChunkCount > bestPosition.slimeChunkCount)
+            bestPosition = slimePos;
     }
+
+    if(bestPosition.slimeChunkCount == 0)
+    {
+        std::cout << "Sorry, no slime chunks for you today :/" << std::endl;
+        return 0;
+    }
+    SlimeChunkPrinter::print(matrix, bestPosition.x, bestPosition.z);
+    std::cout << (static_cast<int32_t>(bestPosition.x)-static_cast<int32_t>(radius))*16 << ' '
+              << (static_cast<int32_t>(bestPosition.z)-static_cast<int32_t>(radius))*16 << ' '
+              << bestPosition.slimeChunkCount << std::endl;
 }

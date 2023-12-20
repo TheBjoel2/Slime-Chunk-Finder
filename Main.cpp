@@ -48,15 +48,14 @@ public:
     {
         for(uint32_t j = 0; j < 16; j++)
         {
-            std::cout << std::endl;
             for(uint32_t i = 0; i < 16; i++)
             {
                 const bool isSlimeChunk = Util::isSlimeChunk(matrix, matrixX+i, matrixZ+j);
                 const bool isWithinSphere = isChunkWithinSphere(i, j);
                 std::cout << (isSlimeChunk&isWithinSphere ? 'S' : ' ');
             }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
     }
 
 private:

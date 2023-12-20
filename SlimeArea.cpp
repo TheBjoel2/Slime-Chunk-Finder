@@ -6,7 +6,7 @@ namespace stdx = std::experimental;
 
 //storage[z][x]
 
-class SlimeArea
+class SlimeArea //silly algorithm to make everything faster
 {
 public:
     SlimeArea(const GlobalSeedMatrix& matrix, const uint32_t matrixX, const uint32_t matrixZ):

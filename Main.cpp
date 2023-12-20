@@ -4,6 +4,7 @@
 #include <vector>
 #include <future>
 #include <mutex>
+#include <optional>
 
 auto getTaskAreasFromUserInput(const uint32_t radius)
 {
@@ -80,6 +81,30 @@ private:
     }
 };
 
+void findBestSlimePlace(const auto& matrix, const auto& area, auto& toReturn)
+{
+    for(uint32_t j = area.beginZ; j < area.endZ; j++)
+    {
+        SlimeArea slimeArea(matrix, area.beginX, j);
+        uint32_t i = area.beginX;
+        do
+        {
+            const uint32_t circleArea = slimeArea.getAreaSum();
+            if(circleArea > toReturn.slimeChunkCount)
+            {
+                toReturn.x = i;
+                toReturn.z = j;
+                toReturn.slimeChunkCount = circleArea;
+            }
+            i++;
+            if(i >= area.endX) break;
+
+            slimeArea.shiftToPositiveX();
+        }
+        while(true);
+    }
+}
+
 int32_t main()
 {
     //Seed input
@@ -113,47 +138,19 @@ int32_t main()
         return 1;
     }
 
+    //vector of tasks
     auto areas = getTaskAreasFromUserInput(radius);
-    std::mutex areaMutex;
+    std::mutex areaMutex; //tasks are used by multiple threads
 
     GlobalSeedMatrix matrix(seed, radius*2);
-    /*
-    std::vector<std::jthread> finderThreads;
-    for(uint32_t i = 0; i < threadNum; i++)
-        finderThreads.emplace_back([&]()
-        {
-            std::unique_lock lock(areaMutex);
-            while(!areas.empty())
-            {
-                //getting area task
-                const auto area = areas.back();
-                areas.pop_back();
-                lock.unlock();
 
-                //searching
-                for(uint32_t j = area.beginZ; j < area.endZ; j++)
-                {
-                    SlimeArea slimeArea(matrix, area.beginX, j);
-                    uint32_t i = area.beginX;
-                    do
-                    {
-                        const uint32_t circleArea = slimeArea.getAreaSum();
-                        if(circleArea > maxCircleArea)
-
-                    }
-                    while(true);
-                }
-
-                lock.lock(); //the next access is areas.empty(), that's why locking
-            }
-        });*/
     struct SlimePosition
     {
         uint32_t x;
         uint32_t z;
         uint32_t slimeChunkCount;
     };
-    std::vector<std::future<SlimePosition>> finderFutures;
+    std::vector<std::future<SlimePosition>> finderFutures; //threads return slime positions
     for(uint32_t i = 0; i < threadNum; i++)
         finderFutures.emplace_back(std::async([&]()->SlimePosition
         {
@@ -168,26 +165,7 @@ int32_t main()
                 lock.unlock();
 
                 //searching
-                for(uint32_t j = area.beginZ; j < area.endZ; j++)
-                {
-                    SlimeArea slimeArea(matrix, area.beginX, j);
-                    uint32_t i = area.beginX;
-                    do
-                    {
-                        const uint32_t circleArea = slimeArea.getAreaSum();
-                        if(circleArea > toReturn.slimeChunkCount)
-                        {
-                            toReturn.x = i;
-                            toReturn.z = j;
-                            toReturn.slimeChunkCount = circleArea;
-                        }
-                        i++;
-                        if(i >= area.endX) break;
-
-                        slimeArea.shiftToPositiveX();
-                    }
-                    while(true);
-                }
+                findBestSlimePlace(matrix, area, toReturn);
 
                 lock.lock(); //the next access is areas.empty(), that's why locking
             }
@@ -195,28 +173,24 @@ int32_t main()
             return toReturn;
         }));
 
-    /*for(auto& fut : finderFutures)
-    {
-        const auto slimePos = fut.get();
-        SlimeChunkPrinter::print(matrix, slimePos.x, slimePos.z);
-        std::cout << static_cast<int32_t>(slimePos.x)-static_cast<int32_t>(radius) << ' ' << static_cast<int32_t>(slimePos.z)-static_cast<int32_t>(radius) << ' ' << slimePos.slimeChunkCount << std::endl;
-    }*/
-
-    SlimePosition bestPosition{0, 0, 0};
+    //processing threads output
+    std::vector<SlimePosition> positions;
     for(auto& fut : finderFutures)
-    {
-        const auto slimePos = fut.get();
-        if(slimePos.slimeChunkCount > bestPosition.slimeChunkCount)
-            bestPosition = slimePos;
-    }
+        positions.emplace_back(fut.get());
 
-    if(bestPosition.slimeChunkCount == 0)
+    const auto bestPosition = std::max_element(positions.cbegin(), positions.cend(), [](const auto& a, const auto& b)->bool
+    {
+        return a.slimeChunkCount < b.slimeChunkCount;
+    });
+    if(bestPosition->slimeChunkCount == 0)
     {
         std::cout << "Sorry, no slime chunks for you today :/" << std::endl;
         return 0;
     }
-    SlimeChunkPrinter::print(matrix, bestPosition.x, bestPosition.z);
-    std::cout << (static_cast<int32_t>(bestPosition.x)-static_cast<int32_t>(radius))*16 << ' '
-              << (static_cast<int32_t>(bestPosition.z)-static_cast<int32_t>(radius))*16 << ' '
-              << bestPosition.slimeChunkCount << std::endl;
+
+    SlimeChunkPrinter::print(matrix, bestPosition->x, bestPosition->z);
+    std::cout << '('
+              << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16 << "; "
+              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16 << "): "
+              << bestPosition->slimeChunkCount << " chunks" << std::endl;
 }

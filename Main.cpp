@@ -4,6 +4,7 @@
 #include <vector>
 #include <future>
 #include <mutex>
+#include <thread>
 #include <optional>
 
 auto getTaskAreasFromUserInput(const uint32_t radius)
@@ -104,6 +105,47 @@ void findBestSlimePlace(const auto& matrix, const auto& area, auto& toReturn)
     }
 }
 
+class ProgressUpdate
+{
+public:
+    ProgressUpdate(const std::size_t totalTasks):
+        m_TotalTasks(totalTasks){}
+
+    void reportTaskDone()
+    {
+        {
+            std::lock_guard lock(m);
+            currentTasks++;
+            reported = true;
+        }
+        cv.notify_one();
+    }
+
+    void printWorker() noexcept try
+    {
+        while(true)
+        {
+            std::unique_lock lock(m);
+            cv.wait(lock, [&]{ return reported; });
+
+            std::cout << '[' << currentTasks << '/' << m_TotalTasks << ']' << std::endl;
+
+            reported = false;
+
+            if(currentTasks >= m_TotalTasks) break;
+        }
+    }
+    catch(...){}
+
+private:
+    const std::size_t m_TotalTasks;
+    std::size_t currentTasks = 0;
+    bool reported = false;
+
+    std::mutex m{};
+    std::condition_variable cv{};
+};
+
 int32_t main()
 {
     //Seed input
@@ -143,6 +185,9 @@ int32_t main()
 
     GlobalSeedMatrix matrix(seed, radius*2);
 
+    //progress output
+    ProgressUpdate update(areas.size());
+
     struct SlimePosition
     {
         uint32_t x;
@@ -166,11 +211,16 @@ int32_t main()
                 //searching
                 findBestSlimePlace(matrix, area, toReturn);
 
+                //reporting
+                update.reportTaskDone();
+
                 lock.lock(); //the next access is areas.empty(), that's why locking
             }
 
             return toReturn;
         }));
+
+    auto updateFuture = std::async(&ProgressUpdate::printWorker, &update);
 
     //processing threads output
     std::vector<SlimePosition> positions;

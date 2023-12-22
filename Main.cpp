@@ -17,7 +17,7 @@ auto getTaskAreasFromUserInput(const uint32_t radius)
     };
     std::vector<Area> areas;
 
-    const uint32_t ConstantArea = 3749998*10;
+    const uint32_t ConstantArea = 3749998*2;
     const uint32_t ZStep = ConstantArea/radius;
 
     uint32_t currentZ = 0;

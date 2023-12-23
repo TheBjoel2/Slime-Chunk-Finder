@@ -149,12 +149,12 @@ private:
 int32_t main()
 {
     //Seed input
-    uint64_t seed;
+    uint64_t seed = 0;
     std::cout << "Enter seed\n: ";
     std::cin >> seed;
 
     //Radius input
-    uint32_t radius;
+    uint32_t radius = 0;
     std::cout << "Enter Radius\n(min=8, max=1874999): ";
     std::cin >> radius;
     if(radius < 8)
@@ -170,7 +170,7 @@ int32_t main()
 
     //Thread number input
     const uint32_t hardwareThreadNum = std::thread::hardware_concurrency();
-    uint32_t threadNum;
+    uint32_t threadNum = 0;
     std::cout << "Enter thread number\n(suggestion=" << hardwareThreadNum << "): ";
     std::cin >> threadNum;
     if(threadNum == 0)

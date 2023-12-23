@@ -238,8 +238,8 @@ int32_t main()
     }
 
     SlimeChunkPrinter::print(matrix, bestPosition->x, bestPosition->z);
-    std::cout << '('
-              << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16 << "; "
-              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16 << "): "
-              << bestPosition->slimeChunkCount << " chunks" << std::endl;
+    std::cout << "AFK position at X:"
+              << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
+              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " ("
+              << bestPosition->slimeChunkCount << " chunks)" << std::endl;
 }

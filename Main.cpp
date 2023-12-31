@@ -242,4 +242,6 @@ int32_t main()
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
               << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " ("
               << bestPosition->slimeChunkCount << " chunks)" << std::endl;
+    char ch;
+	std::cin >> ch;
 }

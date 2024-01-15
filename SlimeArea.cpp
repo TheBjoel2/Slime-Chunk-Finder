@@ -83,141 +83,141 @@ private:
     void substractFromScore()
     {
         //that's right. it's hardcoded
-        if(getFromStorageWithShiftedIndex(4, 0)) totalScore-=755;
-        if(getFromStorageWithShiftedIndex(5, 0)) totalScore-=2926;
-        if(getFromStorageWithShiftedIndex(6, 0)) totalScore-=2114;
-        if(getFromStorageWithShiftedIndex(7, 0)) totalScore-=1039;
+        totalScore-=755*getFromStorageWithShiftedIndex(4, 0);
+        totalScore-=2926*getFromStorageWithShiftedIndex(5, 0);
+        totalScore-=2114*getFromStorageWithShiftedIndex(6, 0);
+        totalScore-=1039*getFromStorageWithShiftedIndex(7, 0);
 
-        if(getFromStorageWithShiftedIndex(3, 1)) totalScore-=3588;
-        if(getFromStorageWithShiftedIndex(4, 1)) totalScore-=3964;
-        if(getFromStorageWithShiftedIndex(5, 1)) totalScore-=384;
+        totalScore-=3588*getFromStorageWithShiftedIndex(3, 1);
+        totalScore-=3964*getFromStorageWithShiftedIndex(4, 1);
+        totalScore-=384*getFromStorageWithShiftedIndex(5, 1);
 
-        if(getFromStorageWithShiftedIndex(2, 2)) totalScore-=4828;
-        if(getFromStorageWithShiftedIndex(3, 2)) totalScore-=3108;
+        totalScore-=4828*getFromStorageWithShiftedIndex(2, 2);
+        totalScore-=3108*getFromStorageWithShiftedIndex(3, 2);
 
-        if(getFromStorageWithShiftedIndex(1, 3)) totalScore-=3588;
-        if(getFromStorageWithShiftedIndex(2, 3)) totalScore-=4348;
+        totalScore-=3588*getFromStorageWithShiftedIndex(1, 3);
+        totalScore-=4348*getFromStorageWithShiftedIndex(2, 3);
 
-        if(getFromStorageWithShiftedIndex(0, 4)) totalScore-=755;
-        if(getFromStorageWithShiftedIndex(1, 4)) totalScore-=6797;
-        if(getFromStorageWithShiftedIndex(2, 4)) totalScore-=384;
+        totalScore-=755*getFromStorageWithShiftedIndex(0, 4);
+        totalScore-=6797*getFromStorageWithShiftedIndex(1, 4);
+        totalScore-=384*getFromStorageWithShiftedIndex(2, 4);
 
-        if(getFromStorageWithShiftedIndex(0, 5)) totalScore-=3681;
-        if(getFromStorageWithShiftedIndex(1, 5)) totalScore-=4255;
+        totalScore-=3681*getFromStorageWithShiftedIndex(0, 5);
+        totalScore-=4255*getFromStorageWithShiftedIndex(1, 5);
 
-        if(getFromStorageWithShiftedIndex(0, 6)) totalScore-=5795;
-        if(getFromStorageWithShiftedIndex(1, 6)) totalScore-=2141;
+        totalScore-=5795*getFromStorageWithShiftedIndex(0, 6);
+        totalScore-=2141*getFromStorageWithShiftedIndex(1, 6);
 
-        if(getFromStorageWithShiftedIndex(0, 7)) totalScore-=6834;
-        if(getFromStorageWithShiftedIndex(1, 7)) totalScore-=1102;
+        totalScore-=6834*getFromStorageWithShiftedIndex(0, 7);
+        totalScore-=1102*getFromStorageWithShiftedIndex(1, 7);
 
-        if(getFromStorageWithShiftedIndex(0, 8)) totalScore-=6834;
-        if(getFromStorageWithShiftedIndex(1, 8)) totalScore-=1102;
+        totalScore-=6834*getFromStorageWithShiftedIndex(0, 8);
+        totalScore-=1102*getFromStorageWithShiftedIndex(1, 8);
 
-        if(getFromStorageWithShiftedIndex(0, 9)) totalScore-=5795;
-        if(getFromStorageWithShiftedIndex(1, 9)) totalScore-=2141;
+        totalScore-=5795*getFromStorageWithShiftedIndex(0, 9);
+        totalScore-=2141*getFromStorageWithShiftedIndex(1, 9);
 
-        if(getFromStorageWithShiftedIndex(0, 10)) totalScore-=3681;
-        if(getFromStorageWithShiftedIndex(1, 10)) totalScore-=4255;
+        totalScore-=3681*getFromStorageWithShiftedIndex(0, 10);
+        totalScore-=4255*getFromStorageWithShiftedIndex(1, 10);
 
-        if(getFromStorageWithShiftedIndex(0, 11)) totalScore-=755;
-        if(getFromStorageWithShiftedIndex(1, 11)) totalScore-=6797;
-        if(getFromStorageWithShiftedIndex(2, 11)) totalScore-=384;
+        totalScore-=755*getFromStorageWithShiftedIndex(0, 11);
+        totalScore-=6797*getFromStorageWithShiftedIndex(1, 11);
+        totalScore-=384*getFromStorageWithShiftedIndex(2, 11);
 
-        if(getFromStorageWithShiftedIndex(1, 12)) totalScore-=3588;
-        if(getFromStorageWithShiftedIndex(2, 12)) totalScore-=4348;
+        totalScore-=3588*getFromStorageWithShiftedIndex(1, 12);
+        totalScore-=4348*getFromStorageWithShiftedIndex(2, 12);
 
-        if(getFromStorageWithShiftedIndex(2, 13)) totalScore-=4828;
-        if(getFromStorageWithShiftedIndex(3, 13)) totalScore-=3108;
+        totalScore-=4828*getFromStorageWithShiftedIndex(2, 13);
+        totalScore-=3108*getFromStorageWithShiftedIndex(3, 13);
 
-        if(getFromStorageWithShiftedIndex(3, 14)) totalScore-=3588;
-        if(getFromStorageWithShiftedIndex(4, 14)) totalScore-=3964;
-        if(getFromStorageWithShiftedIndex(5, 14)) totalScore-=384;
+        totalScore-=3588*getFromStorageWithShiftedIndex(3, 14);
+        totalScore-=3964*getFromStorageWithShiftedIndex(4, 14);
+        totalScore-=384*getFromStorageWithShiftedIndex(5, 14);
 
-        if(getFromStorageWithShiftedIndex(4, 15)) totalScore-=755;
-        if(getFromStorageWithShiftedIndex(5, 15)) totalScore-=2926;
-        if(getFromStorageWithShiftedIndex(6, 15)) totalScore-=2114;
-        if(getFromStorageWithShiftedIndex(7, 15)) totalScore-=1039;
+        totalScore-=755*getFromStorageWithShiftedIndex(4, 15);
+        totalScore-=2926*getFromStorageWithShiftedIndex(5, 15);
+        totalScore-=2114*getFromStorageWithShiftedIndex(6, 15);
+        totalScore-=1039*getFromStorageWithShiftedIndex(7, 15);
 
         //that little motherfucker sphere
-        if(getFromStorageWithShiftedIndex(7, 6)) totalScore+=855;
+        totalScore+=855*getFromStorageWithShiftedIndex(7, 6);
 
-        if(getFromStorageWithShiftedIndex(6, 7)) totalScore+=855;
-        if(getFromStorageWithShiftedIndex(7, 7)) totalScore+=4003;
+        totalScore+=855*getFromStorageWithShiftedIndex(6, 7);
+        totalScore+=4003*getFromStorageWithShiftedIndex(7, 7);
 
-        if(getFromStorageWithShiftedIndex(6, 8)) totalScore+=855;
-        if(getFromStorageWithShiftedIndex(7, 8)) totalScore+=4003;
+        totalScore+=855*getFromStorageWithShiftedIndex(6, 8);
+        totalScore+=4003*getFromStorageWithShiftedIndex(7, 8);
 
-        if(getFromStorageWithShiftedIndex(7, 9)) totalScore+=855;
+        totalScore+=855*getFromStorageWithShiftedIndex(7, 9);
     }
 
     void addToScore()
     {
-        if(getFromStorageWithShiftedIndex(9, 0)) totalScore+=1039;
-        if(getFromStorageWithShiftedIndex(10, 0)) totalScore+=2114;
-        if(getFromStorageWithShiftedIndex(11, 0)) totalScore+=2926;
-        if(getFromStorageWithShiftedIndex(12, 0)) totalScore+=755;
+        totalScore+=1039*getFromStorageWithShiftedIndex(9, 0);
+        totalScore+=2114*getFromStorageWithShiftedIndex(10, 0);
+        totalScore+=2926*getFromStorageWithShiftedIndex(11, 0);
+        totalScore+=755*getFromStorageWithShiftedIndex(12, 0);
 
-        if(getFromStorageWithShiftedIndex(11, 1)) totalScore+=384;
-        if(getFromStorageWithShiftedIndex(12, 1)) totalScore+=3964;
-        if(getFromStorageWithShiftedIndex(13, 1)) totalScore+=3588;
+        totalScore+=384*getFromStorageWithShiftedIndex(11, 1);
+        totalScore+=3964*getFromStorageWithShiftedIndex(12, 1);
+        totalScore+=3588*getFromStorageWithShiftedIndex(13, 1);
 
-        if(getFromStorageWithShiftedIndex(13, 2)) totalScore+=3108;
-        if(getFromStorageWithShiftedIndex(14, 2)) totalScore+=4828;
+        totalScore+=3108*getFromStorageWithShiftedIndex(13, 2);
+        totalScore+=4828*getFromStorageWithShiftedIndex(14, 2);
 
-        if(getFromStorageWithShiftedIndex(14, 3)) totalScore+=4348;
-        if(getFromStorageWithShiftedIndex(15, 3)) totalScore+=3588;
+        totalScore+=4348*getFromStorageWithShiftedIndex(14, 3);
+        totalScore+=3588*getFromStorageWithShiftedIndex(15, 3);
 
-        if(getFromStorageWithShiftedIndex(14, 4)) totalScore+=384;
-        if(getFromStorageWithShiftedIndex(15, 4)) totalScore+=6797;
-        if(getFromStorageWithShiftedIndex(0, 4)) totalScore+=755;
+        totalScore+=384*getFromStorageWithShiftedIndex(14, 4);
+        totalScore+=6797*getFromStorageWithShiftedIndex(15, 4);
+        totalScore+=755*getFromStorageWithShiftedIndex(0, 4);
 
-        if(getFromStorageWithShiftedIndex(15, 5)) totalScore+=4255;
-        if(getFromStorageWithShiftedIndex(0, 5)) totalScore+=3681;
+        totalScore+=4255*getFromStorageWithShiftedIndex(15, 5);
+        totalScore+=3681*getFromStorageWithShiftedIndex(0, 5);
 
-        if(getFromStorageWithShiftedIndex(15, 6)) totalScore+=2141;
-        if(getFromStorageWithShiftedIndex(0, 6)) totalScore+=5795;
+        totalScore+=2141*getFromStorageWithShiftedIndex(15, 6);
+        totalScore+=5795*getFromStorageWithShiftedIndex(0, 6);
 
-        if(getFromStorageWithShiftedIndex(15, 7)) totalScore+=1102;
-        if(getFromStorageWithShiftedIndex(0, 7)) totalScore+=6834;
+        totalScore+=1102*getFromStorageWithShiftedIndex(15, 7);
+        totalScore+=6834*getFromStorageWithShiftedIndex(0, 7);
 
-        if(getFromStorageWithShiftedIndex(15, 8)) totalScore+=1102;
-        if(getFromStorageWithShiftedIndex(0, 8)) totalScore+=6834;
+        totalScore+=1102*getFromStorageWithShiftedIndex(15, 8);
+        totalScore+=6834*getFromStorageWithShiftedIndex(0, 8);
 
-        if(getFromStorageWithShiftedIndex(15, 9)) totalScore+=2141;
-        if(getFromStorageWithShiftedIndex(0, 9)) totalScore+=5795;
+        totalScore+=2141*getFromStorageWithShiftedIndex(15, 9);
+        totalScore+=5795*getFromStorageWithShiftedIndex(0, 9);
 
-        if(getFromStorageWithShiftedIndex(15, 10)) totalScore+=4255;
-        if(getFromStorageWithShiftedIndex(0, 10)) totalScore+=3681;
+        totalScore+=4255*getFromStorageWithShiftedIndex(15, 10);
+        totalScore+=3681*getFromStorageWithShiftedIndex(0, 10);
 
-        if(getFromStorageWithShiftedIndex(14, 11)) totalScore+=384;
-        if(getFromStorageWithShiftedIndex(15, 11)) totalScore+=6797;
-        if(getFromStorageWithShiftedIndex(0, 11)) totalScore+=755;
+        totalScore+=384*getFromStorageWithShiftedIndex(14, 11);
+        totalScore+=6797*getFromStorageWithShiftedIndex(15, 11);
+        totalScore+=755*getFromStorageWithShiftedIndex(0, 11);
 
-        if(getFromStorageWithShiftedIndex(14, 12)) totalScore+=4348;
-        if(getFromStorageWithShiftedIndex(15, 12)) totalScore+=3588;
+        totalScore+=4348*getFromStorageWithShiftedIndex(14, 12);
+        totalScore+=3588*getFromStorageWithShiftedIndex(15, 12);
 
-        if(getFromStorageWithShiftedIndex(13, 13)) totalScore+=3108;
-        if(getFromStorageWithShiftedIndex(14, 13)) totalScore+=4828;
+        totalScore+=3108*getFromStorageWithShiftedIndex(13, 13);
+        totalScore+=4828*getFromStorageWithShiftedIndex(14, 13);
 
-        if(getFromStorageWithShiftedIndex(11, 14)) totalScore+=384;
-        if(getFromStorageWithShiftedIndex(12, 14)) totalScore+=3964;
-        if(getFromStorageWithShiftedIndex(13, 14)) totalScore+=3588;
+        totalScore+=384*getFromStorageWithShiftedIndex(11, 14);
+        totalScore+=3964*getFromStorageWithShiftedIndex(12, 14);
+        totalScore+=3588*getFromStorageWithShiftedIndex(13, 14);
 
-        if(getFromStorageWithShiftedIndex(9, 15)) totalScore+=1039;
-        if(getFromStorageWithShiftedIndex(10, 15)) totalScore+=2114;
-        if(getFromStorageWithShiftedIndex(11, 15)) totalScore+=2926;
-        if(getFromStorageWithShiftedIndex(12, 15)) totalScore+=755;
+        totalScore+=1039*getFromStorageWithShiftedIndex(9, 15);
+        totalScore+=2114*getFromStorageWithShiftedIndex(10, 15);
+        totalScore+=2926*getFromStorageWithShiftedIndex(11, 15);
+        totalScore+=755*getFromStorageWithShiftedIndex(12, 15);
 
         //that little motherfucker sphere
-        if(getFromStorageWithShiftedIndex(9, 6)) totalScore-=855;
+        totalScore-=855*getFromStorageWithShiftedIndex(9, 6);
 
-        if(getFromStorageWithShiftedIndex(9, 7)) totalScore-=4003;
-        if(getFromStorageWithShiftedIndex(10, 7)) totalScore-=855;
+        totalScore-=4003*getFromStorageWithShiftedIndex(9, 7);
+        totalScore-=855*getFromStorageWithShiftedIndex(10, 7);
 
-        if(getFromStorageWithShiftedIndex(9, 8)) totalScore-=4003;
-        if(getFromStorageWithShiftedIndex(10, 8)) totalScore-=855;
+        totalScore-=4003*getFromStorageWithShiftedIndex(9, 8);
+        totalScore-=855*getFromStorageWithShiftedIndex(10, 8);
 
-        if(getFromStorageWithShiftedIndex(9, 9)) totalScore-=855;
+        totalScore-=855*getFromStorageWithShiftedIndex(9, 9);
     }
 };

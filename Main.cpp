@@ -6,6 +6,7 @@
 #include <mutex>
 #include <thread>
 #include <optional>
+#include <chrono>
 
 auto getTaskAreasFromUserInput(const uint32_t radius)
 {
@@ -188,6 +189,9 @@ int32_t main()
     //progress output
     ProgressUpdate update(areas.size());
 
+    //time measurement
+    const auto timeStarted = std::chrono::steady_clock::now();
+
     struct SlimePosition
     {
         uint32_t x;
@@ -227,6 +231,11 @@ int32_t main()
     for(auto& fut : finderFutures)
         positions.emplace_back(fut.get());
 
+    //time measurement
+    const auto timeEnded = std::chrono::steady_clock::now();
+    const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(timeEnded-timeStarted);
+    std::cout << "It took " << seconds.count() << " seconds" << std::endl;
+
     const auto bestPosition = std::max_element(positions.cbegin(), positions.cend(), [](const auto& a, const auto& b)->bool
     {
         return a.slimeChunkCount < b.slimeChunkCount;
@@ -242,6 +251,7 @@ int32_t main()
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
               << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " ("
               << bestPosition->slimeChunkCount << " chunks)" << std::endl;
+    //do not close right after we found it
     char ch;
-	std::cin >> ch;
+    std::cin >> ch;
 }

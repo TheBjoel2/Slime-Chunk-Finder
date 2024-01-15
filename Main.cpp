@@ -48,37 +48,19 @@ class SlimeChunkPrinter
 public:
     static void print(const GlobalSeedMatrix& matrix, const uint32_t matrixX, const uint32_t matrixZ)
     {
+        uint32_t chunkCount = 0;
         for(uint32_t j = 0; j < 16; j++)
         {
             for(uint32_t i = 0; i < 16; i++)
             {
                 const bool isSlimeChunk = Util::isSlimeChunk(matrix, matrixX+i, matrixZ+j);
-                const bool isWithinSphere = isChunkWithinSphere(i, j);
+                const bool isWithinSphere = Util::isChunkWithinSphere(i, j);
+                chunkCount+=isSlimeChunk;
                 std::cout << (isSlimeChunk&isWithinSphere ? 'S' : ' ');
             }
             std::cout << std::endl;
         }
-    }
-
-private:
-    static uint32_t calculateVolume(const int32_t chunkX, const int32_t chunkZ)
-    {
-        uint32_t volume = 0;
-
-        for(int32_t x = chunkX*16; x < (chunkX+1)*16; x++)
-            for(int32_t z = chunkZ*16; z < (chunkZ+1)*16; z++)
-                for(int32_t y = 1; y < 32; y++)
-                {
-                    const auto sum = x*x+y*y+z*z;
-                    if(sum <= 16384 && sum > 576)
-                        volume++;
-                }
-        return volume;
-    }
-
-    static bool isChunkWithinSphere(const uint32_t chunkX, const uint32_t chunkZ)
-    {
-        return calculateVolume(static_cast<int32_t>(chunkX)-8, static_cast<int32_t>(chunkZ)-8) > 1500;
+        std::cout << chunkCount << " chunks in use" << std::endl;
     }
 };
 
@@ -90,12 +72,12 @@ void findBestSlimePlace(const auto& matrix, const auto& area, auto& toReturn)
         uint32_t i = area.beginX;
         do
         {
-            const uint32_t circleArea = slimeArea.getAreaSum();
-            if(circleArea > toReturn.slimeChunkCount)
+            const uint32_t score = slimeArea.getTotalScore();
+            if(score > toReturn.score)
             {
                 toReturn.x = i;
                 toReturn.z = j;
-                toReturn.slimeChunkCount = circleArea;
+                toReturn.score = score;
             }
             i++;
             if(i >= area.endX) break;
@@ -196,7 +178,7 @@ int32_t main()
     {
         uint32_t x;
         uint32_t z;
-        uint32_t slimeChunkCount;
+        uint32_t score;
     };
     std::vector<std::future<SlimePosition>> finderFutures; //threads return slime positions
     for(uint32_t i = 0; i < threadNum; i++)
@@ -238,9 +220,9 @@ int32_t main()
 
     const auto bestPosition = std::max_element(positions.cbegin(), positions.cend(), [](const auto& a, const auto& b)->bool
     {
-        return a.slimeChunkCount < b.slimeChunkCount;
+        return a.score < b.score;
     });
-    if(bestPosition->slimeChunkCount == 0)
+    if(bestPosition->score == 0)
     {
         std::cout << "Sorry, no slime chunks for you today :/" << std::endl;
         return 0;
@@ -249,8 +231,9 @@ int32_t main()
     SlimeChunkPrinter::print(matrix, bestPosition->x, bestPosition->z);
     std::cout << "AFK position at X:"
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
-              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " ("
-              << bestPosition->slimeChunkCount << " chunks)" << std::endl;
+              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " (score="
+              << bestPosition->score << ")\n"
+              << "Higher score means better" << std::endl;
     //do not close right after we found it
     char ch;
     std::cin >> ch;

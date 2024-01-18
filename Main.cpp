@@ -213,6 +213,9 @@ int32_t main()
     for(auto& fut : finderFutures)
         positions.emplace_back(fut.get());
 
+    //wait for progress update finishing printing
+    updateFuture.wait();
+
     //time measurement
     const auto timeEnded = std::chrono::steady_clock::now();
     const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(timeEnded-timeStarted);

@@ -7,4 +7,9 @@ General purpose binaries are provided in the release page. For those, who wants 
 ```
 g++ -std=c++20 -O3 -s -flto -fwhole-program Main.cpp -march=native
 ```
-Launch the program -> enter required data, following the instructions ofc -> enjoy the result. Use wisely. Report bugs.
+Note that the compilation process is quite slow, it takes several minutes.
+
+# Farm Height
+Using this program is quite straightforward except for the one thing that may confuse you - farm height. Get the Y levels of the highest and the lowest spawning platforms in your farm, substract highest from the lowest, add one to this and that's the farm height. If you're still confused, open the issue.
+
+Use this program wisely. Report bugs.

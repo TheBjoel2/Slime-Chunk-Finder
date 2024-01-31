@@ -1,5 +1,6 @@
 #include "GlobalSeedMatrix.cpp"
 #include "JavaRandom.cpp"
+#include <cmath>
 
 namespace Util
 {
@@ -11,33 +12,32 @@ bool isSlimeChunk(const GlobalSeedMatrix& matrix, const uint32_t matrixX, const 
     return (randValue == 0);
 }
 
-uint32_t getChunkScore(const uint32_t x, const uint32_t z)
+constexpr uint32_t getChunkScore(const uint32_t x, const uint32_t z, const uint32_t farmHeight)
 {
-    const uint32_t scoreMatrix[16][16] =
+    const auto calculateVolume = [&](const int32_t chunkX, const int32_t chunkZ)->uint32_t
     {
-        {   0,    0,    0,    0,  755, 3681, 5795, 6834, 6834, 5795, 3681,  755,    0,    0,    0,    0},
-        {   0,    0,    0, 3588, 7552, 7936, 7936, 7936, 7936, 7936, 7936, 7552, 3588,    0,    0,    0},
-        {   0,    0, 4828, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 4828,    0,    0},
-        {   0, 3588, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 3588,    0},
-        { 755, 7552, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7552,  755},
-        {3681, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 3681},
-        {5795, 7936, 7936, 7936, 7936, 7936, 7936, 7081, 7081, 7936, 7936, 7936, 7936, 7936, 7936, 5795},
-        {6834, 7936, 7936, 7936, 7936, 7936, 7081, 3078, 3078, 7081, 7936, 7936, 7936, 7936, 7936, 6834},
-        {6834, 7936, 7936, 7936, 7936, 7936, 7081, 3078, 3078, 7081, 7936, 7936, 7936, 7936, 7936, 6834},
-        {5795, 7936, 7936, 7936, 7936, 7936, 7936, 7081, 7081, 7936, 7936, 7936, 7936, 7936, 7936, 5795},
-        {3681, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 3681},
-        { 755, 7552, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7552,  755},
-        {   0, 3588, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 3588,    0},
-        {   0,    0, 4828, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 7936, 4828,    0,    0},
-        {   0,    0,    0, 3588, 7552, 7936, 7936, 7936, 7936, 7936, 7936, 7552, 3588,    0,    0,    0},
-        {   0,    0,    0,    0,  755, 3681, 5795, 6834, 6834, 5795, 3681,  755,    0,    0,    0,    0},
+        uint32_t volume = 0;
+
+        for(int32_t x = chunkX*16; x < (chunkX+1)*16; x++)
+            for(int32_t z = chunkZ*16; z < (chunkZ+1)*16; z++)
+                for(int32_t y = 1; y <= static_cast<int32_t>(farmHeight); y++)
+                {
+                    const auto sum = x*x+y*y+z*z;
+                    if(sum <= 16384 && sum > 576)
+                        volume++;
+                }
+        return volume;
     };
-    return scoreMatrix[z][x];
+
+    const int32_t translatedX = -std::abs(int32_t(x < 8 ? x-8 : x-7));
+    const int32_t translatedZ = -std::abs(int32_t(z < 8 ? z-8 : z-7));
+
+    return calculateVolume(translatedX, translatedZ);
 }
 
-bool isChunkWithinSphere(const uint32_t x, const uint32_t z)
+bool isChunkWithinSphere(const uint32_t x, const uint32_t z, const uint32_t farmHeight)
 {
-    return getChunkScore(x, z) != 0;
+    return getChunkScore(x, z, farmHeight) != 0;
 }
 
 }

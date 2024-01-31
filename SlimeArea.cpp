@@ -6,6 +6,7 @@ namespace stdx = std::experimental;
 
 //storage[z][x]
 
+template<uint32_t farmHeight>
 class SlimeArea //silly algorithm to make everything faster
 {
 public:
@@ -18,9 +19,9 @@ public:
             for(uint32_t i = 0; i < 16; i++)
             {
                 const bool isSlimeChunk = Util::isSlimeChunk(matrix, matrixX+i, matrixZ+j);
-                const bool isWithinSphere = Util::isChunkWithinSphere(i, j);
+                const bool isWithinSphere = Util::isChunkWithinSphere(i, j, farmHeight);
                 storage[j][i] = isSlimeChunk;
-                totalScore+=(isSlimeChunk&isWithinSphere ? Util::getChunkScore(i, j) : 0);
+                totalScore+=(isSlimeChunk&isWithinSphere ? Util::getChunkScore(i, j, farmHeight) : 0);
             }
     }
 
@@ -80,144 +81,32 @@ private:
         return storage[z][(i >= 16 ? i-16 : i)];
     }
 
+    template<uint32_t i = 0>
     void substractFromScore()
     {
-        //that's right. it's hardcoded
-        totalScore-=755*getFromStorageWithShiftedIndex(4, 0);
-        totalScore-=2926*getFromStorageWithShiftedIndex(5, 0);
-        totalScore-=2114*getFromStorageWithShiftedIndex(6, 0);
-        totalScore-=1039*getFromStorageWithShiftedIndex(7, 0);
+        const uint32_t score = Util::getChunkScore(i%8, i/8, farmHeight);
+        const uint32_t lastScore = Util::getChunkScore(i%8-1, i/8, farmHeight);
+        const int32_t diff = (i%8 == 0 ? score : score-lastScore);
 
-        totalScore-=3588*getFromStorageWithShiftedIndex(3, 1);
-        totalScore-=3964*getFromStorageWithShiftedIndex(4, 1);
-        totalScore-=384*getFromStorageWithShiftedIndex(5, 1);
+        if constexpr(diff != 0)
+            totalScore-=diff*getFromStorageWithShiftedIndex(i%8, i/8);
 
-        totalScore-=4828*getFromStorageWithShiftedIndex(2, 2);
-        totalScore-=3108*getFromStorageWithShiftedIndex(3, 2);
-
-        totalScore-=3588*getFromStorageWithShiftedIndex(1, 3);
-        totalScore-=4348*getFromStorageWithShiftedIndex(2, 3);
-
-        totalScore-=755*getFromStorageWithShiftedIndex(0, 4);
-        totalScore-=6797*getFromStorageWithShiftedIndex(1, 4);
-        totalScore-=384*getFromStorageWithShiftedIndex(2, 4);
-
-        totalScore-=3681*getFromStorageWithShiftedIndex(0, 5);
-        totalScore-=4255*getFromStorageWithShiftedIndex(1, 5);
-
-        totalScore-=5795*getFromStorageWithShiftedIndex(0, 6);
-        totalScore-=2141*getFromStorageWithShiftedIndex(1, 6);
-
-        totalScore-=6834*getFromStorageWithShiftedIndex(0, 7);
-        totalScore-=1102*getFromStorageWithShiftedIndex(1, 7);
-
-        totalScore-=6834*getFromStorageWithShiftedIndex(0, 8);
-        totalScore-=1102*getFromStorageWithShiftedIndex(1, 8);
-
-        totalScore-=5795*getFromStorageWithShiftedIndex(0, 9);
-        totalScore-=2141*getFromStorageWithShiftedIndex(1, 9);
-
-        totalScore-=3681*getFromStorageWithShiftedIndex(0, 10);
-        totalScore-=4255*getFromStorageWithShiftedIndex(1, 10);
-
-        totalScore-=755*getFromStorageWithShiftedIndex(0, 11);
-        totalScore-=6797*getFromStorageWithShiftedIndex(1, 11);
-        totalScore-=384*getFromStorageWithShiftedIndex(2, 11);
-
-        totalScore-=3588*getFromStorageWithShiftedIndex(1, 12);
-        totalScore-=4348*getFromStorageWithShiftedIndex(2, 12);
-
-        totalScore-=4828*getFromStorageWithShiftedIndex(2, 13);
-        totalScore-=3108*getFromStorageWithShiftedIndex(3, 13);
-
-        totalScore-=3588*getFromStorageWithShiftedIndex(3, 14);
-        totalScore-=3964*getFromStorageWithShiftedIndex(4, 14);
-        totalScore-=384*getFromStorageWithShiftedIndex(5, 14);
-
-        totalScore-=755*getFromStorageWithShiftedIndex(4, 15);
-        totalScore-=2926*getFromStorageWithShiftedIndex(5, 15);
-        totalScore-=2114*getFromStorageWithShiftedIndex(6, 15);
-        totalScore-=1039*getFromStorageWithShiftedIndex(7, 15);
-
-        //that little motherfucker sphere
-        totalScore+=855*getFromStorageWithShiftedIndex(7, 6);
-
-        totalScore+=855*getFromStorageWithShiftedIndex(6, 7);
-        totalScore+=4003*getFromStorageWithShiftedIndex(7, 7);
-
-        totalScore+=855*getFromStorageWithShiftedIndex(6, 8);
-        totalScore+=4003*getFromStorageWithShiftedIndex(7, 8);
-
-        totalScore+=855*getFromStorageWithShiftedIndex(7, 9);
+        if constexpr(i+1 < 128)
+            substractFromScore<i+1>();
     }
 
+    template<uint32_t i = 0>
     void addToScore()
     {
-        totalScore+=1039*getFromStorageWithShiftedIndex(9, 0);
-        totalScore+=2114*getFromStorageWithShiftedIndex(10, 0);
-        totalScore+=2926*getFromStorageWithShiftedIndex(11, 0);
-        totalScore+=755*getFromStorageWithShiftedIndex(12, 0);
+        const uint32_t score = Util::getChunkScore(i%8+9, i/8, farmHeight);
+        const uint32_t lastScore = Util::getChunkScore(i%8+8, i/8, farmHeight);
+        const int32_t diff = score-lastScore;
+        const uint32_t I = (i%8+9 == 16 ? 0 : i%8+9);
 
-        totalScore+=384*getFromStorageWithShiftedIndex(11, 1);
-        totalScore+=3964*getFromStorageWithShiftedIndex(12, 1);
-        totalScore+=3588*getFromStorageWithShiftedIndex(13, 1);
+        if constexpr(diff != 0)
+            totalScore-=diff*getFromStorageWithShiftedIndex(I, i/8);
 
-        totalScore+=3108*getFromStorageWithShiftedIndex(13, 2);
-        totalScore+=4828*getFromStorageWithShiftedIndex(14, 2);
-
-        totalScore+=4348*getFromStorageWithShiftedIndex(14, 3);
-        totalScore+=3588*getFromStorageWithShiftedIndex(15, 3);
-
-        totalScore+=384*getFromStorageWithShiftedIndex(14, 4);
-        totalScore+=6797*getFromStorageWithShiftedIndex(15, 4);
-        totalScore+=755*getFromStorageWithShiftedIndex(0, 4);
-
-        totalScore+=4255*getFromStorageWithShiftedIndex(15, 5);
-        totalScore+=3681*getFromStorageWithShiftedIndex(0, 5);
-
-        totalScore+=2141*getFromStorageWithShiftedIndex(15, 6);
-        totalScore+=5795*getFromStorageWithShiftedIndex(0, 6);
-
-        totalScore+=1102*getFromStorageWithShiftedIndex(15, 7);
-        totalScore+=6834*getFromStorageWithShiftedIndex(0, 7);
-
-        totalScore+=1102*getFromStorageWithShiftedIndex(15, 8);
-        totalScore+=6834*getFromStorageWithShiftedIndex(0, 8);
-
-        totalScore+=2141*getFromStorageWithShiftedIndex(15, 9);
-        totalScore+=5795*getFromStorageWithShiftedIndex(0, 9);
-
-        totalScore+=4255*getFromStorageWithShiftedIndex(15, 10);
-        totalScore+=3681*getFromStorageWithShiftedIndex(0, 10);
-
-        totalScore+=384*getFromStorageWithShiftedIndex(14, 11);
-        totalScore+=6797*getFromStorageWithShiftedIndex(15, 11);
-        totalScore+=755*getFromStorageWithShiftedIndex(0, 11);
-
-        totalScore+=4348*getFromStorageWithShiftedIndex(14, 12);
-        totalScore+=3588*getFromStorageWithShiftedIndex(15, 12);
-
-        totalScore+=3108*getFromStorageWithShiftedIndex(13, 13);
-        totalScore+=4828*getFromStorageWithShiftedIndex(14, 13);
-
-        totalScore+=384*getFromStorageWithShiftedIndex(11, 14);
-        totalScore+=3964*getFromStorageWithShiftedIndex(12, 14);
-        totalScore+=3588*getFromStorageWithShiftedIndex(13, 14);
-
-        totalScore+=1039*getFromStorageWithShiftedIndex(9, 15);
-        totalScore+=2114*getFromStorageWithShiftedIndex(10, 15);
-        totalScore+=2926*getFromStorageWithShiftedIndex(11, 15);
-        totalScore+=755*getFromStorageWithShiftedIndex(12, 15);
-
-        //that little motherfucker sphere
-        totalScore-=855*getFromStorageWithShiftedIndex(9, 6);
-
-        totalScore-=4003*getFromStorageWithShiftedIndex(9, 7);
-        totalScore-=855*getFromStorageWithShiftedIndex(10, 7);
-
-        totalScore-=4003*getFromStorageWithShiftedIndex(9, 8);
-        totalScore-=855*getFromStorageWithShiftedIndex(10, 8);
-
-        totalScore-=855*getFromStorageWithShiftedIndex(9, 9);
+        if constexpr(i+1 < 128)
+            addToScore<i+1>();
     }
 };

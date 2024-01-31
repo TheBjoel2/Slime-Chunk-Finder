@@ -46,7 +46,7 @@ auto getTaskAreasFromUserInput(const uint32_t radius)
 class SlimeChunkPrinter
 {
 public:
-    static void print(const GlobalSeedMatrix& matrix, const uint32_t matrixX, const uint32_t matrixZ)
+    static void print(const GlobalSeedMatrix& matrix, const uint32_t matrixX, const uint32_t matrixZ, const uint32_t farmHeight)
     {
         uint32_t chunkCount = 0;
         for(uint32_t j = 0; j < 16; j++)
@@ -54,7 +54,7 @@ public:
             for(uint32_t i = 0; i < 16; i++)
             {
                 const bool isSlimeChunk = Util::isSlimeChunk(matrix, matrixX+i, matrixZ+j);
-                const bool isWithinSphere = Util::isChunkWithinSphere(i, j);
+                const bool isWithinSphere = Util::isChunkWithinSphere(i, j, farmHeight);
                 chunkCount+=isSlimeChunk;
                 std::cout << (isSlimeChunk&isWithinSphere ? 'S' : ' ');
             }
@@ -64,11 +64,21 @@ public:
     }
 };
 
-void findBestSlimePlace(const auto& matrix, const auto& area, auto& toReturn)
+template<uint32_t i = 1>
+void findBestSlimePlace(const uint32_t farmHeight, const auto& matrix, const auto& area, auto& toReturn)
+{
+    if(i == farmHeight)
+        _findBestSlimePlace<i>(matrix, area, toReturn);
+    else if constexpr(i <= 126)
+        findBestSlimePlace<i+1>(farmHeight, matrix, area, toReturn);
+}
+
+template<uint32_t farmHeight>
+void _findBestSlimePlace(const auto& matrix, const auto& area, auto& toReturn)
 {
     for(uint32_t j = area.beginZ; j < area.endZ; j++)
     {
-        SlimeArea slimeArea(matrix, area.beginX, j);
+        SlimeArea<farmHeight> slimeArea(matrix, area.beginX, j);
         uint32_t i = area.beginX;
         do
         {
@@ -140,14 +150,19 @@ int32_t main()
     uint32_t radius = 0;
     std::cout << "Enter Radius\n(min=8, max=1874999): ";
     std::cin >> radius;
-    if(radius < 8)
+    if(radius < 8 || radius > 1874999)
     {
         std::cout << "Please enter proper radius value" << std::endl;
         return 1;
     }
-    if(radius > 1874999)
+
+    //farm height input
+    uint32_t farmHeight = 0;
+    std::cout << "Enter farm height\n(min=1, max=126): ";
+    std::cin >> farmHeight;
+    if(farmHeight < 1 || farmHeight > 126)
     {
-        std::cout << "Please enter proper radius value" << std::endl;
+        std::cout << "Please enter proper farm height value" << std::endl;
         return 1;
     }
 
@@ -195,7 +210,7 @@ int32_t main()
                 lock.unlock();
 
                 //searching
-                findBestSlimePlace(matrix, area, toReturn);
+                findBestSlimePlace(farmHeight, matrix, area, toReturn);
 
                 //reporting
                 update.reportTaskDone();
@@ -231,7 +246,7 @@ int32_t main()
         return 0;
     }
 
-    SlimeChunkPrinter::print(matrix, bestPosition->x, bestPosition->z);
+    SlimeChunkPrinter::print(matrix, bestPosition->x, bestPosition->z, farmHeight);
     std::cout << "AFK position at X:"
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
               << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " (score="

@@ -69,7 +69,7 @@ void findBestSlimePlace(const uint32_t farmHeight, const auto& matrix, const aut
 {
     if(i == farmHeight)
         _findBestSlimePlace<i>(matrix, area, toReturn);
-    else if constexpr(i <= 126)
+    else if constexpr(i <= 103)
         findBestSlimePlace<i+1>(farmHeight, matrix, area, toReturn);
 }
 
@@ -158,9 +158,9 @@ int32_t main()
 
     //farm height input
     uint32_t farmHeight = 0;
-    std::cout << "Enter farm height\n(min=1, max=126): ";
+    std::cout << "Enter farm height\n(min=1, max=103): ";
     std::cin >> farmHeight;
-    if(farmHeight < 1 || farmHeight > 126)
+    if(farmHeight < 1 || farmHeight > 103)
     {
         std::cout << "Please enter proper farm height value" << std::endl;
         return 1;

@@ -116,12 +116,21 @@ public:
 
     void printWorker() noexcept try
     {
+        const auto timeOnStart = std::chrono::steady_clock::now();
+
         while(true)
         {
             std::unique_lock lock(m);
             cv.wait(lock, [&]{ return reported; });
 
-            std::cout << '[' << currentTasks << '/' << m_TotalTasks << ']' << std::endl;
+            const auto timePassedSeconds = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-timeOnStart);
+            const auto speed = (timePassedSeconds.count() == 0 ? 1 : currentTasks/timePassedSeconds.count());
+            const auto secondsLeft = (m_TotalTasks-currentTasks)/speed;
+
+            std::cout << '[' << currentTasks << '/' << m_TotalTasks << "]\t"
+                      << std::setw(2) << std::setfill('0') << secondsLeft/3600 << ':'
+                      << std::setw(2) << std::setfill('0') << secondsLeft%3600/60 << ':'
+                      << std::setw(2) << std::setfill('0') << secondsLeft%60 << " left" << std::endl;
 
             reported = false;
 

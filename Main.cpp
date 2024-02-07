@@ -124,8 +124,8 @@ public:
             cv.wait(lock, [&]{ return reported; });
 
             const auto timePassedSeconds = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-timeOnStart);
-            const auto speed = (timePassedSeconds.count() == 0 ? 1 : currentTasks/timePassedSeconds.count());
-            const auto secondsLeft = (m_TotalTasks-currentTasks)/speed;
+            const auto speed = (timePassedSeconds.count() == 0 ? 0 : currentTasks/timePassedSeconds.count());
+            const auto secondsLeft = (speed == 0 ? 0 : (m_TotalTasks-currentTasks)/speed);
 
             std::cout << '[' << currentTasks << '/' << m_TotalTasks << "]\t"
                       << std::setw(2) << std::setfill('0') << secondsLeft/3600 << ':'

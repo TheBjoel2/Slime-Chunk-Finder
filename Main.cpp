@@ -127,7 +127,7 @@ public:
             const auto speed = (timePassedSeconds.count() == 0 ? 0 : currentTasks/timePassedSeconds.count());
             const auto secondsLeft = (speed == 0 ? 0 : (m_TotalTasks-currentTasks)/speed);
 
-            std::cout << '[' << currentTasks << '/' << m_TotalTasks << "]\t"
+            std::cout << '[' << currentTasks << '/' << m_TotalTasks << "] "
                       << std::setw(2) << std::setfill('0') << secondsLeft/3600 << ':'
                       << std::setw(2) << std::setfill('0') << secondsLeft%3600/60 << ':'
                       << std::setw(2) << std::setfill('0') << secondsLeft%60 << " left" << std::endl;

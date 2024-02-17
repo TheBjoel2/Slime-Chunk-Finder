@@ -55,7 +55,7 @@ public:
             {
                 const bool isSlimeChunk = Util::isSlimeChunk(matrix, matrixX+i, matrixZ+j);
                 const bool isWithinSphere = Util::isChunkWithinSphere(i, j, farmHeight);
-                chunkCount+=isSlimeChunk;
+                chunkCount+=isSlimeChunk&isWithinSphere;
                 std::cout << (isSlimeChunk&isWithinSphere ? 'S' : ' ');
             }
             std::cout << std::endl;

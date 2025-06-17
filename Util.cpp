@@ -36,9 +36,6 @@ constexpr uint32_t getChunkVolume(const uint32_t x, const uint32_t z, const uint
         return volume;
     };
 
-    //const int32_t translatedX = -std::abs(int32_t(x < 8 ? x-8 : x-7));
-    //const int32_t translatedZ = -std::abs(int32_t(z < 8 ? z-8 : z-7));
-
     const int32_t translatedX = static_cast<int32_t>(x-8);
     const int32_t translatedZ = static_cast<int32_t>(z-8);
 

@@ -338,10 +338,21 @@ int32_t main()
     }
 
     SlimeChunkPrinter::print(matrix, bestPosition->x, bestPosition->z, farmHeight);
+
+    struct thousandsSeparated : std::numpunct<char>
+    {
+        char_type do_thousands_sep() const override{ return '\''; }
+        string_type do_grouping() const override { return "\03"; }
+    };
+
+    std::stringstream scoreStringStream;
+    scoreStringStream.imbue(std::locale(std::cout.getloc(), new thousandsSeparated));
+    scoreStringStream << bestPosition->score;
+
     std::cout << "AFK position at X:"
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
               << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " (score="
-              << bestPosition->score << ")\n"
+              << scoreStringStream.str() << ")\n"
               << "Higher score means better" << std::endl;
     //do not close right after we found it
     char ch;

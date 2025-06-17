@@ -3,7 +3,6 @@
 #include <utility>
 #include <stdexcept>
 #include <iostream>
-#include <vector>
 
 namespace Version
 {

@@ -110,31 +110,3 @@ public:
         return totalScore;
     }
 };
-
-/*#include <iostream>
-
-int main()
-{
-    const GlobalSeedMatrix matrix(1, 1'000*2);
-
-    BiomeAreaEvaluatorParams baep
-    {
-        MC_1_17,
-        1, //seed
-        1000, //world radius in chunks
-        1, //farmHeight
-        0, 2, //matrix coords
-        matrix
-    };
-
-    std::cout << BiomeAreaEvaluator::evaluate(baep) << std::endl;
-
-    uint32_t chunkNum = 0;
-    for(uint32_t j = 0; j < 16; j++)
-        for(uint32_t i = 0; i < 16; i++)
-        {
-            const bool isSlimeChunk = Util::isSlimeChunk(matrix, 0+i, 2+j);
-            chunkNum+=isSlimeChunk ? Util::getChunkScore(i, j, 1) : 0;
-        }
-    std::cout << chunkNum << std::endl;
-}*/

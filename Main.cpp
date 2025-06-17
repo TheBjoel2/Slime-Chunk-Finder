@@ -77,7 +77,7 @@ void findBestSlimePlace(const uint32_t farmHeight,
 {
     if(i == farmHeight)
         _findBestSlimePlace<i>(minecraftVersion, seed, radius, matrix, area, sharedVolume, toReturn);
-    else if constexpr(i <= 1) //HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE
+    else if constexpr(i <= 32)
         findBestSlimePlace<i+1>(farmHeight, minecraftVersion, seed, radius, matrix, area, sharedVolume, toReturn);
 }
 
@@ -220,9 +220,9 @@ int32_t main()
 
     //farm height input
     uint32_t farmHeight = 0;
-    std::cout << "Enter farm height\n(min=1, max=103): ";
+    std::cout << "Enter farm height\n(min=1, max=32): ";
     std::cin >> farmHeight;
-    if(farmHeight < 1 || farmHeight > 103)
+    if(farmHeight < 1 || farmHeight > 32)
     {
         std::cout << "Please enter proper farm height value" << std::endl;
         return 1;

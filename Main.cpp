@@ -1,4 +1,5 @@
 #include "SlimeArea.cpp"
+#include "BiomeAreaEvaluator.cpp"
 #include <iostream>
 #include <cstdint>
 #include <vector>
@@ -65,29 +66,81 @@ public:
 };
 
 template<uint32_t i = 1>
-void findBestSlimePlace(const uint32_t farmHeight, const auto& matrix, const auto& area, auto& toReturn)
+void findBestSlimePlace(const uint32_t farmHeight,
+                        const int minecraftVersion,
+                        const uint64_t seed,
+                        const uint32_t radius,
+                        const auto& matrix,
+                        const auto& area,
+                        auto& sharedVolume,
+                        auto& toReturn)
 {
     if(i == farmHeight)
-        _findBestSlimePlace<i>(matrix, area, toReturn);
-    else if constexpr(i <= 103)
-        findBestSlimePlace<i+1>(farmHeight, matrix, area, toReturn);
+        _findBestSlimePlace<i>(minecraftVersion, seed, radius, matrix, area, sharedVolume, toReturn);
+    else if constexpr(i <= 1) //HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE HERE
+        findBestSlimePlace<i+1>(farmHeight, minecraftVersion, seed, radius, matrix, area, sharedVolume, toReturn);
 }
 
 template<uint32_t farmHeight>
-void _findBestSlimePlace(const auto& matrix, const auto& area, auto& toReturn)
+void _findBestSlimePlace(const int minecraftVersion,
+                         const uint64_t seed,
+                         const uint32_t radius,
+                         const auto& matrix,
+                         const auto& area,
+                         auto& sharedVolume,
+                         auto& toReturn)
 {
+    uint32_t localVolumeWorthChecking = sharedVolume.getVolumeWorthChecking();
+
     for(uint32_t j = area.beginZ; j < area.endZ; j++)
     {
         SlimeArea<farmHeight> slimeArea(matrix, area.beginX, j);
         uint32_t i = area.beginX;
         do
         {
-            const uint32_t score = slimeArea.getTotalScore();
-            if(score > toReturn.score)
+            const auto getDistanceSquared = [](const uint32_t x, const uint32_t z)->uint64_t
             {
-                toReturn.x = i;
-                toReturn.z = j;
-                toReturn.score = score;
+                const uint64_t X = static_cast<uint64_t>(x);
+                const uint64_t Z = static_cast<uint64_t>(z);
+                return X*X + Z*Z;
+            };
+
+            const uint32_t volume = slimeArea.getTotalVolume();
+
+            const auto queryCheckVolume = [&sharedVolume, &localVolumeWorthChecking, &volume]()->bool
+            {
+                const uint32_t queriedVolume = sharedVolume.getVolumeWorthChecking();
+                if(volume > queriedVolume)
+                    return true;
+
+                localVolumeWorthChecking = queriedVolume;
+                return false;
+            };
+
+            if(volume > localVolumeWorthChecking
+            && queryCheckVolume())
+            {
+                const BiomeAreaEvaluatorParams biomeEvaluatorParams {
+                    minecraftVersion,
+                    seed,
+                    radius,
+                    farmHeight,
+                    i, j,
+                    matrix
+                };
+
+                const uint64_t biomeScore = BiomeAreaEvaluator::evaluate(biomeEvaluatorParams);
+
+                if(biomeScore > toReturn.score
+                || (biomeScore == toReturn.score && getDistanceSquared(i, j) < getDistanceSquared(toReturn.x, toReturn.z)))
+                {
+                    toReturn.score = biomeScore;
+                    toReturn.x = i;
+                    toReturn.z = j;
+
+                    localVolumeWorthChecking = biomeScore/g_OneFullBlockPackSpawnScore;
+                    sharedVolume.setPotentiallyBiggerVolume(localVolumeWorthChecking);
+                }
             }
             i++;
             if(i >= area.endX) break;
@@ -186,11 +239,16 @@ int32_t main()
         return 1;
     }
 
+    //minecraft version
+    const auto minecraftVersion = Version::getMinecraftVersionFromUserInput();
+
+    std::cout << "It might be a bit slow at first, but it will eventually get faster..." << std::endl;
+
     //vector of tasks
     auto areas = getTaskAreasFromUserInput(radius);
     std::mutex areaMutex; //tasks are used by multiple threads
 
-    GlobalSeedMatrix matrix(seed, radius*2);
+    const GlobalSeedMatrix matrix(seed, radius*2);
 
     //progress output
     ProgressUpdate update(areas.size());
@@ -202,9 +260,33 @@ int32_t main()
     {
         uint32_t x;
         uint32_t z;
-        uint32_t score;
+        uint64_t score;
     };
     std::vector<std::future<SlimePosition>> finderFutures; //threads return slime positions
+
+    class SharedVolume
+    {
+    public:
+        uint32_t getVolumeWorthChecking() const
+        {
+            return m_Volume.load();
+        }
+
+        //only sets the volume if it's actually bigger than the current volume
+        //locks the thread
+        void setPotentiallyBiggerVolume(const uint32_t newVolume)
+        {
+            std::lock_guard lock(m_VolumeMutex);
+            if(newVolume > m_Volume.load())
+                m_Volume.store(newVolume);
+        }
+
+    private:
+        std::atomic_uint32_t m_Volume{0};
+        std::mutex m_VolumeMutex{};
+    };
+    SharedVolume sharedVolume;
+
     for(uint32_t i = 0; i < threadNum; i++)
         finderFutures.emplace_back(std::async([&]()->SlimePosition
         {
@@ -219,7 +301,7 @@ int32_t main()
                 lock.unlock();
 
                 //searching
-                findBestSlimePlace(farmHeight, matrix, area, toReturn);
+                findBestSlimePlace(farmHeight, minecraftVersion, seed, radius, matrix, area, sharedVolume, toReturn);
 
                 //reporting
                 update.reportTaskDone();

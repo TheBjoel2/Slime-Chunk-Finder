@@ -21,27 +21,27 @@ public:
                 const bool isSlimeChunk = Util::isSlimeChunk(matrix, matrixX+i, matrixZ+j);
                 const bool isWithinSphere = Util::isChunkWithinSphere(i, j, farmHeight);
                 storage[j][i] = isSlimeChunk;
-                totalScore+=(isSlimeChunk&isWithinSphere ? Util::getChunkScore(i, j, farmHeight) : 0);
+                totalVolume+=(isSlimeChunk&isWithinSphere ? Util::getChunkVolume(i, j, farmHeight) : 0);
             }
     }
 
-    uint32_t getTotalScore() const
+    uint32_t getTotalVolume() const
     {
-        return totalScore;
+        return totalVolume;
     }
 
     void shiftToPositiveX()
     {
-        substractFromScore();
+        substractFromVolume();
         calculateNewColumn();
-        addToScore();
+        addToVolume();
         incrementGenerateToX();
     }
 
 private:
     const GlobalSeedMatrix& matrix;
     bool storage[16][16];
-    uint32_t totalScore = 0;
+    uint32_t totalVolume = 0;
     uint32_t generateToX = 0;
 
           uint32_t currentMatrixX;
@@ -71,8 +71,7 @@ private:
 
     void incrementGenerateToX()
     {
-        generateToX++;
-        generateToX = (generateToX >= 16 ? generateToX-16 : generateToX);
+        generateToX = (generateToX+1)%16;
     }
 
     bool getFromStorageWithShiftedIndex(const uint32_t x, const uint32_t z)
@@ -82,31 +81,32 @@ private:
     }
 
     template<uint32_t i = 0>
-    void substractFromScore()
+    void substractFromVolume()
     {
-        const uint32_t score = Util::getChunkScore(i%8, i/8, farmHeight);
-        const uint32_t lastScore = Util::getChunkScore(i%8-1, i/8, farmHeight);
-        const int32_t diff = (i%8 == 0 ? score : score-lastScore);
+        const uint32_t volume = Util::getChunkVolume(i%9, i/9, farmHeight);
+        const uint32_t lastVolume = Util::getChunkVolume(i%9-1, i/9, farmHeight);
+        const int32_t diff = (i%9 == 0 ? volume : volume-lastVolume);
+
 
         if constexpr(diff != 0)
-            totalScore-=diff*getFromStorageWithShiftedIndex(i%8, i/8);
+            totalVolume-=diff*getFromStorageWithShiftedIndex(i%9, i/9);
 
-        if constexpr(i+1 < 128)
-            substractFromScore<i+1>();
+        if constexpr(i+1 < 144)
+            substractFromVolume<i+1>();
     }
 
     template<uint32_t i = 0>
-    void addToScore()
+    void addToVolume()
     {
-        const uint32_t score = Util::getChunkScore(i%8+9, i/8, farmHeight);
-        const uint32_t lastScore = Util::getChunkScore(i%8+8, i/8, farmHeight);
-        const int32_t diff = score-lastScore;
+        const uint32_t volume = Util::getChunkVolume(i%8+9, i/8, farmHeight);
+        const uint32_t lastVolume = Util::getChunkVolume(i%8+8, i/8, farmHeight);
+        const int32_t diff = volume-lastVolume;
         const uint32_t I = (i%8+9 == 16 ? 0 : i%8+9);
 
         if constexpr(diff != 0)
-            totalScore-=diff*getFromStorageWithShiftedIndex(I, i/8);
+            totalVolume-=diff*getFromStorageWithShiftedIndex(I, i/8);
 
         if constexpr(i+1 < 128)
-            addToScore<i+1>();
+            addToVolume<i+1>();
     }
 };

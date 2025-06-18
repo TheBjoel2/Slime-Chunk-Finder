@@ -341,7 +341,7 @@ int32_t main()
 
     struct thousandsSeparated : std::numpunct<char>
     {
-        char_type do_thousands_sep() const override{ return '\''; }
+        char_type do_thousands_sep() const override{ return ' '; }
         string_type do_grouping() const override { return "\03"; }
     };
 
@@ -351,8 +351,9 @@ int32_t main()
 
     std::cout << "AFK position at X:"
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
-              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << " (score="
-              << scoreStringStream.str() << ")\n"
+              << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << '\n'
+              << std::setprecision(4) << bestPosition->score/256.0f/g_OneFullBlockPackSpawnScore << " \"full\" chunks, score="
+              << scoreStringStream.str() << " (this is a number)\n"
               << "Higher score means better" << std::endl;
     //do not close right after we found it
     char ch;

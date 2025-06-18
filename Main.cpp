@@ -177,8 +177,10 @@ public:
             cv.wait(lock, [&]{ return reported; });
 
             const auto timePassedSeconds = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-timeOnStart);
-            const auto speed = (timePassedSeconds.count() == 0 ? 0 : currentTasks/timePassedSeconds.count());
-            const auto secondsLeft = (speed == 0 ? 0 : (m_TotalTasks-currentTasks)/speed);
+            const auto speed = static_cast<float>(timePassedSeconds.count() == 0 ? 0.0f : 1.0f*currentTasks/timePassedSeconds.count());
+
+            using NumberType = decltype(timePassedSeconds/timePassedSeconds);
+            const NumberType secondsLeft = (speed == 0.0f ? 0 : (m_TotalTasks-currentTasks)/speed);
 
             std::cout << '[' << currentTasks << '/' << m_TotalTasks << "] "
                       << std::setw(2) << std::setfill('0') << secondsLeft/3600 << ':'

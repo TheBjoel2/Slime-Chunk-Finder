@@ -352,7 +352,7 @@ int32_t main()
     std::cout << "AFK position at X:"
               << (static_cast<int32_t>(bestPosition->x)-static_cast<int32_t>(radius))*16+128 << "; Z:"
               << (static_cast<int32_t>(bestPosition->z)-static_cast<int32_t>(radius))*16+128 << '\n'
-              << std::setprecision(4) << bestPosition->score/256.0f/g_OneFullBlockPackSpawnScore << " \"full\" chunks, score="
+              << std::setprecision(4) << bestPosition->score/256.0f/farmHeight/g_OneFullBlockPackSpawnScore << " \"full\" chunks, score="
               << scoreStringStream.str() << " (this is a number)\n"
               << "Higher score means better" << std::endl;
     //do not close right after we found it

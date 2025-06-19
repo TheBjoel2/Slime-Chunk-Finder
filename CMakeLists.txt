@@ -24,14 +24,19 @@ endif()
 add_subdirectory(cubiomes)
 
 add_executable(Slime-Chunk-Finder Main.cpp)
+add_executable(Slime-Chunk-Finder-static Main.cpp)
 
 target_link_libraries(Slime-Chunk-Finder PRIVATE cubiomes_static)
+target_link_libraries(Slime-Chunk-Finder-static PRIVATE cubiomes_static)
+
 if (ASAN)
     target_link_libraries(Slime-Chunk-Finder PRIVATE asan)
+    target_link_libraries(Slime-Chunk-Finder-static PRIVATE asan)
 endif()
 if (UBSAN)
     target_link_libraries(Slime-Chunk-Finder PRIVATE ubsan)
+    target_link_libraries(Slime-Chunk-Finder-static PRIVATE ubsan)
 endif()
-if (STATIC)
-    target_link_libraries(Slime-Chunk-Finder PRIVATE -static)
-endif()
+
+target_link_libraries(Slime-Chunk-Finder-static PRIVATE -static)
+

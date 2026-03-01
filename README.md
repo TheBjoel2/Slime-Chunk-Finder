@@ -13,7 +13,7 @@ make
 ```
 If you want the compiler to optimize the produced binary for your CPU, the ``cmake`` command is as follows:
 ```
-cmake "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_BUILD_TYPE=Release" "-DMARCH=ON"..
+cmake "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_BUILD_TYPE=Release" "-DMARCH=ON" ..
 ```
 Note that the compilation process is quite slow (takes a couple minutes to finish) bc I abuse templates too much 😜.
 
